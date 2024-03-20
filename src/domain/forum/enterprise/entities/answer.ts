@@ -10,7 +10,7 @@ export interface AnswerProps {
   authorId: UniqueEntityId
   questionId: UniqueEntityId
   attachments: AnswerAttachmentList
-  updatedAt?: Date
+  updatedAt?: Date | null
 }
 
 export class Answer extends AggregateRoot<AnswerProps> {
