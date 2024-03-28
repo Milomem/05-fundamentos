@@ -15,6 +15,16 @@ export class InMemoryAnswersRepository implements AnswerRepository {
     const itemIndex = this.items.findIndex((item) => item.id === answer.id)
 
     this.items[itemIndex] = answer
+
+    await this.answerAttachmentsRepository.createMany(
+      answer.attachments.getNewItems(),
+    )
+
+    await this.answerAttachmentsRepository.deleteMany(
+      answer.attachments.getRemovedItems(),
+    )
+
+    DomainEvents.dispatchEventsForAggregate(answer.id)
   }
 
   async findManyByQuestionId(questionId: string, { page }: PaginationParams) {
@@ -37,6 +47,10 @@ export class InMemoryAnswersRepository implements AnswerRepository {
 
   async create(answer: Answer) {
     this.items.push(answer)
+
+    await this.answerAttachmentsRepository.createMany(
+      answer.attachments.getItems(),
+    )
 
     DomainEvents.dispatchEventsForAggregate(answer.id)
   }
